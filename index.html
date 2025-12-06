@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ورد دمشقي ثلاثي الأبعاد</title>
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        font-family: "Segoe UI", "Tahoma", "Arial", sans-serif;
+        perspective: 1000px;
+        position: relative;
+    }
+    
+    /* خلفية النجوم */
+    .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    .star {
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 3s infinite;
+    }
+    
+    @keyframes twinkle {
+        0% { opacity: 0.2; }
+        50% { opacity: 1; }
+        100% { opacity: 0.2; }
+    }
+
+    .flower-container {
+        position: relative;
+        width: min(300px, 80vw);
+        height: min(300px, 80vw);
+        animation: glowPulse 4s infinite alternate, rotate3D 20s infinite linear;
+        transform-style: preserve-3d;
+    }
+
+    /* تم حذف الإشعاع الأحمر */
+
+    /* قلب وردة دمشق */
+    .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 70px;
+        height: 70px;
+        background: radial-gradient(circle, #8B0000, #DC143C);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) translateZ(25px);
+        box-shadow: 0 0 30px #8B0000, 0 0 60px #DC143C, 0 20px 30px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.4);
+        z-index: 10;
+        filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
+    }
+
+    /* طبقات داخلية للوردة */
+    .inner-petals {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80px;
+        height: 80px;
+        transform: translate(-50%, -50%) translateZ(15px);
+        z-index: 8;
+    }
+
+    .inner-petal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 60px;
+        height: 100px;
+        background: linear-gradient(135deg, #8B0000, #DC143C);
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        transform-origin: center bottom;
+        z-index: 9;
+        transform-style: preserve-3d;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset 0 0 10px rgba(255,255,255,0.2), 0 0 8px rgba(255,255,255,0.4);
+        filter: drop-shadow(0 0 2px rgba(255,255,255,0.5));
+    }
+
+    /* البتلات (8 بتلات لورد دمشقي) */
+    .petal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120px;
+        height: 200px;
+        background: linear-gradient(135deg, #8B0000, #DC143C, #FF69B4);
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        transform-origin: center bottom;
+        z-index: 5;
+        transform-style: preserve-3d;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 0 15px rgba(255,255,255,0.2), 0 0 15px rgba(255,255,255,0.3), 0 0 25px rgba(255,255,255,0.2);
+        opacity: 0.9;
+        filter: drop-shadow(0 0 3px rgba(255,255,255,0.5));
+    }
+
+    /* كل بتلة بزاوية مختلفة (8 بتلات) */
+    .petal:nth-child(2)  { transform: translate(-50%, -100%) rotate(0deg)   scale(0); }
+    .petal:nth-child(3)  { transform: translate(-50%, -100%) rotate(45deg)  scale(0); }
+    .petal:nth-child(4)  { transform: translate(-50%, -100%) rotate(90deg)  scale(0); }
+    .petal:nth-child(5)  { transform: translate(-50%, -100%) rotate(135deg) scale(0); }
+    .petal:nth-child(6)  { transform: translate(-50%, -100%) rotate(180deg) scale(0); }
+    .petal:nth-child(7)  { transform: translate(-50%, -100%) rotate(225deg) scale(0); }
+    .petal:nth-child(8)  { transform: translate(-50%, -100%) rotate(270deg) scale(0); }
+    .petal:nth-child(9)  { transform: translate(-50%, -100%) rotate(315deg) scale(0); }
+
+    /* البتلات الداخلية */
+    .inner-petal:nth-child(1) { transform: translate(-50%, -100%) rotate(22.5deg)   scale(0); }
+    .inner-petal:nth-child(2) { transform: translate(-50%, -100%) rotate(67.5deg)   scale(0); }
+    .inner-petal:nth-child(3) { transform: translate(-50%, -100%) rotate(112.5deg)  scale(0); }
+    .inner-petal:nth-child(4) { transform: translate(-50%, -100%) rotate(157.5deg)  scale(0); }
+    .inner-petal:nth-child(5) { transform: translate(-50%, -100%) rotate(202.5deg)  scale(0); }
+    .inner-petal:nth-child(6) { transform: translate(-50%, -100%) rotate(247.5deg)  scale(0); }
+    .inner-petal:nth-child(7) { transform: translate(-50%, -100%) rotate(292.5deg)  scale(0); }
+    .inner-petal:nth-child(8) { transform: translate(-50%, -100%) rotate(337.5deg)  scale(0); }
+
+    /* حركة الافتتاح */
+    .open .petal {
+        animation: bloom 2.5s forwards;
+        animation-delay: calc(var(--i) * 0.15s);
+    }
+
+    .open .inner-petal {
+        animation: bloomInner 2.5s forwards;
+        animation-delay: calc(var(--i) * 0.1s);
+    }
+
+    @keyframes bloom {
+        0%   { transform: translate(-50%, -100%) rotate(calc(var(--r) * 1deg)) scale(0) translateZ(0); }
+        70%  { transform: translate(-50%, -100%) rotate(calc(var(--r) * 1deg)) scale(1.1) translateZ(25px); }
+        100% { transform: translate(-50%, -100%) rotate(calc(var(--r) * 1deg)) scale(1) translateZ(15px); }
+    }
+
+    @keyframes bloomInner {
+        0%   { transform: translate(-50%, -100%) rotate(calc(var(--r) * 1deg)) scale(0) translateZ(0); }
+        70%  { transform: translate(-50%, -100%) rotate(calc(var(--r) * 1deg)) scale(1.1) translateZ(20px); }
+        100% { transform: translate(-50%, -100%) rotate(calc(var(--r) * 1deg)) scale(1) translateZ(10px); }
+    }
+
+    /* تم حذف تأثير الإشعاع */
+
+    @keyframes glowPulse {
+        0%   { filter: brightness(1) hue-rotate(0deg); }
+        100% { filter: brightness(1.5) hue-rotate(20deg); }
+    }
+
+    @keyframes rotate3D {
+        0% { transform: rotateY(0deg) rotateX(5deg); }
+        100% { transform: rotateY(360deg) rotateX(5deg); }
+    }
+
+    h1 {
+        position: absolute;
+        bottom: min(30px, 5vh);
+        color: #8B0000;
+        text-shadow: 0 0 20px #DC143C, 0 0 15px rgba(255,255,255,0.5), 0 0 25px rgba(255,255,255,0.3);
+        font-size: clamp(1.2rem, 5vw, 2.5rem);
+        animation: textGlow 3s infinite alternate;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+        filter: drop-shadow(0 0 5px rgba(255,255,255,0.4));
+        padding: 0 15px;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    h1.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @keyframes textGlow {
+        from { text-shadow: 0 0 20px #DC143C, 0 0 15px rgba(255,255,255,0.5), 0 0 25px rgba(255,255,255,0.3); }
+        to   { text-shadow: 0 0 40px #8B0000, 0 0 60px #DC143C, 0 0 20px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.5); }
+    }
+    
+    @keyframes textAppear {
+        0% { opacity: 0; transform: translateY(20px); }
+        50% { opacity: 0.5; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+<body>
+
+<!-- خلفية النجوم -->
+<div class="stars" id="stars"></div>
+
+<div class="flower-container" id="flower">
+    <div class="center"></div>
+
+    <!-- البتلات الخارجية -->
+    <div class="petal" style="--i:1; --r:0"></div>
+    <div class="petal" style="--i:2; --r:45"></div>
+    <div class="petal" style="--i:3; --r:90"></div>
+    <div class="petal" style="--i:4; --r:135"></div>
+    <div class="petal" style="--i:5; --r:180"></div>
+    <div class="petal" style="--i:6; --r:225"></div>
+    <div class="petal" style="--i:7; --r:270"></div>
+    <div class="petal" style="--i:8; --r:315"></div>
+
+    <!-- البتلات الداخلية -->
+    <div class="inner-petals">
+        <div class="inner-petal" style="--i:1; --r:22.5"></div>
+        <div class="inner-petal" style="--i:2; --r:67.5"></div>
+        <div class="inner-petal" style="--i:3; --r:112.5"></div>
+        <div class="inner-petal" style="--i:4; --r:157.5"></div>
+        <div class="inner-petal" style="--i:5; --r:202.5"></div>
+        <div class="inner-petal" style="--i:6; --r:247.5"></div>
+        <div class="inner-petal" style="--i:7; --r:292.5"></div>
+        <div class="inner-petal" style="--i:8; --r:337.5"></div>
+    </div>
+</div>
+
+<h1 id="message">هذه الوردة لك اكراما لجمالك الذي لا يقدر بثمن انا احبك</h1>
+
+<script>
+    // عشان الزهرة تتفتح بعد 1 ثانية من فتح الصفحة
+    setTimeout(() => {
+        document.getElementById("flower").classList.add("open");
+        
+        // إظهار النص بعد بدء تفتح الوردة
+        setTimeout(() => {
+            document.getElementById("message").classList.add("visible");
+        }, 1500);
+    }, 1000);
+    
+    // إنشاء النجوم في الخلفية
+    function createStars() {
+        const starsContainer = document.getElementById("stars");
+        const starCount = 200;
+        
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement("div");
+            star.classList.add("star");
+            
+            // حجم عشوائي للنجوم
+            const size = Math.random() * 3;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            
+            // موضع عشوائي
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            
+            // تأخير عشوائي للوميض
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            
+            // إضافة النجمة للحاوية
+            starsContainer.appendChild(star);
+        }
+    }
+    
+    // إنشاء النجوم عند تحميل الصفحة
+    window.onload = function() {
+        createStars();
+    };
+</script>
+
+<!-- استجابة لأحجام الشاشات المختلفة -->
+<style>
+    @media (max-width: 768px) {
+        .petal {
+            width: 80px;
+            height: 140px;
+        }
+        
+        .inner-petal {
+            width: 40px;
+            height: 70px;
+        }
+        
+        .center {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .inner-petals {
+            width: 60px;
+            height: 60px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .petal {
+            width: 60px;
+            height: 100px;
+        }
+        
+        .inner-petal {
+            width: 30px;
+            height: 50px;
+        }
+        
+        .center {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .inner-petals {
+            width: 50px;
+            height: 50px;
+        }
+    }
+</style>
+
+</body>
+</html>
